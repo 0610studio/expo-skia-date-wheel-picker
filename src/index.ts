@@ -13,6 +13,7 @@ export type {
   DatePartKey,
   DatePickerProps,
   HexColor,
+  PickerBackgroundColor,
   PickerColumn,
   PickerMode,
   PickerOption,

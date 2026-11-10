@@ -21,6 +21,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 8,
   },
+  labelFade: {
+    maxWidth: '100%',
+  },
   label: {
     textAlign: 'center',
     includeFontPadding: false,

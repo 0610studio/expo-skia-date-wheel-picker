@@ -95,9 +95,25 @@ export type DatePickerProps = {
   is24hourSource?: 'locale' | 'device';
 
   /**
-   * Background color for the wheel surface and Skia overlay.
+   * Background color behind the wheels.
+   *
+   * @remarks
+   * The edge fade is applied to the row labels themselves, so the picker can
+   * sit on translucent surfaces such as iOS sheets.
+   *
+   * @defaultValue "transparent"
    */
-  backgroundColor?: HexColor;
+  backgroundColor?: PickerBackgroundColor;
+
+  /**
+   * Label opacity at the very top and bottom edge of each wheel.
+   *
+   * Rows fade linearly from fully opaque next to the center row down to this
+   * value at the edge. Clamped to `0`–`1`.
+   *
+   * @defaultValue 0
+   */
+  edgeOpacity?: number;
 
   /**
    * Color for the active centered row and guide accents.
@@ -148,6 +164,11 @@ export type DatePickerProps = {
 export type HexColor = `#${string}`;
 
 /**
+ * Picker background: a hex color or `"transparent"`.
+ */
+export type PickerBackgroundColor = HexColor | 'transparent';
+
+/**
  * Supported top-level picker modes.
  */
 export type PickerMode = NonNullable<DatePickerProps['mode']>;
@@ -179,9 +200,10 @@ export type WheelColumnProps = {
   selectedValue: number;
   onValueChange: (value: number) => void;
   onStateChange?: (state: 'spinning' | 'idle') => void;
-  backgroundColor: HexColor;
+  backgroundColor: PickerBackgroundColor;
   activeFontColor: HexColor;
   disableFontColor: string;
+  edgeOpacity: number;
   fontSize: number;
   fontFamily?: string;
   allowFontScaling: boolean;

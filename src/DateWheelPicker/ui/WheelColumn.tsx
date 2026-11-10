@@ -1,10 +1,4 @@
-import {
-  Canvas,
-  Line,
-  LinearGradient,
-  Rect,
-  vec,
-} from "@shopify/react-native-skia";
+import { Canvas, Line, vec } from "@shopify/react-native-skia";
 import * as Haptics from "expo-haptics";
 import React, {
   useCallback,
@@ -14,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import {
+  Animated,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -36,26 +31,53 @@ type WheelOptionRowProps = {
     fontFamily?: string;
     fontSize: number;
   };
+  edgeOpacity: number;
+  fadeDistance: number;
   index: number;
   isActive: boolean;
   onPressOption: (index: number) => void;
   option: PickerOption;
+  rowHeight: number;
   rowStyle: { height: number };
+  scrollY: Animated.Value;
 };
 
 const WheelOptionRow = React.memo(function WheelOptionRow({
   allowFontScaling,
   dynamicInactiveLabelStyle,
   dynamicLabelStyle,
+  edgeOpacity,
+  fadeDistance,
   index,
   isActive,
   onPressOption,
   option,
+  rowHeight,
   rowStyle,
+  scrollY,
 }: WheelOptionRowProps) {
   const handlePress = useCallback(() => {
     onPressOption(index);
   }, [index, onPressOption]);
+
+  // The row is centered when scrollY === index * rowHeight. It stays fully
+  // opaque inside the center band and fades to `edgeOpacity` at the wheel edge.
+  const fadeStyle = useMemo(() => {
+    const centeredOffset = index * rowHeight;
+
+    return {
+      opacity: scrollY.interpolate({
+        inputRange: [
+          centeredOffset - fadeDistance,
+          centeredOffset - rowHeight / 2,
+          centeredOffset + rowHeight / 2,
+          centeredOffset + fadeDistance,
+        ],
+        outputRange: [edgeOpacity, 1, 1, edgeOpacity],
+        extrapolate: "clamp",
+      }),
+    };
+  }, [edgeOpacity, fadeDistance, index, rowHeight, scrollY]);
 
   return (
     <Pressable
@@ -63,18 +85,20 @@ const WheelOptionRow = React.memo(function WheelOptionRow({
       onPress={handlePress}
       accessibilityRole="button"
     >
-      <Text
-        allowFontScaling={allowFontScaling}
-        style={[
-          styles.label,
-          dynamicLabelStyle,
-          isActive ? styles.activeLabel : styles.inactiveLabel,
-          !isActive ? dynamicInactiveLabelStyle : undefined,
-        ]}
-        numberOfLines={1}
-      >
-        {option.label}
-      </Text>
+      <Animated.View style={[styles.labelFade, fadeStyle]}>
+        <Text
+          allowFontScaling={allowFontScaling}
+          style={[
+            styles.label,
+            dynamicLabelStyle,
+            isActive ? styles.activeLabel : styles.inactiveLabel,
+            !isActive ? dynamicInactiveLabelStyle : undefined,
+          ]}
+          numberOfLines={1}
+        >
+          {option.label}
+        </Text>
+      </Animated.View>
     </Pressable>
   );
 });
@@ -87,6 +111,7 @@ function WheelColumn({
   backgroundColor,
   activeFontColor,
   disableFontColor,
+  edgeOpacity,
   fontSize,
   fontFamily,
   allowFontScaling,
@@ -111,6 +136,7 @@ function WheelColumn({
 
     return foundIndex >= 0 ? foundIndex : 0;
   }, [options, selectedValue]);
+  const scrollY = useRef(new Animated.Value(selectedIndex * rowHeight)).current;
 
   const dynamicLabelStyle = useMemo(
     () => ({ fontSize, color: activeFontColor, fontFamily }),
@@ -133,13 +159,10 @@ function WheelColumn({
     () => options.map((_, index) => index * rowHeight),
     [options, rowHeight],
   );
-  const overlayHeight = wheelHeight / 2 - rowHeight / 2;
+  // Distance from the center to the wheel edge, measured to a row's center.
+  const fadeDistance = wheelHeight / 2;
   const topGuideY = wheelHeight / 2 - rowHeight / 2;
   const bottomGuideY = wheelHeight / 2 + rowHeight / 2;
-  const transparentBackgroundColor = useMemo(
-    () => withHexAlpha(backgroundColor, "00", "#FFFFFF00"),
-    [backgroundColor],
-  );
   const guideColor = useMemo(
     () => withHexAlpha(activeFontColor, "11", "#00000011"),
     [activeFontColor],
@@ -169,8 +192,12 @@ function WheelColumn({
   const handleScrollToIndex = useCallback(
     (index: number, animated: boolean) => {
       scrollRef.current?.scrollTo({ y: index * rowHeight, animated });
+
+      if (!animated) {
+        scrollY.setValue(index * rowHeight);
+      }
     },
-    [rowHeight],
+    [rowHeight, scrollY],
   );
 
   const syncDisplayedIndex = useCallback(
@@ -272,6 +299,15 @@ function WheelColumn({
     [emitValueFromOffset, scheduleIdle, syncDisplayedIndex, updateWheelState],
   );
 
+  const handleAnimatedScroll = useMemo(
+    () =>
+      Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+        useNativeDriver: true,
+        listener: handleScroll,
+      }),
+    [handleScroll, scrollY],
+  );
+
   const handlePressOption = useCallback(
     (index: number) => {
       if (index === selectedIndex) {
@@ -348,7 +384,7 @@ function WheelColumn({
       style={[styles.wheelColumn, wheelColumnStyle]}
       onLayout={handleWheelLayout}
     >
-      <ScrollView
+      <Animated.ScrollView
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
         bounces={false}
@@ -358,7 +394,7 @@ function WheelColumn({
         contentContainerStyle={[styles.wheelContent, wheelContentStyle]}
         onScrollBeginDrag={handleScrollBegin}
         onMomentumScrollBegin={handleScrollBegin}
-        onScroll={handleScroll}
+        onScroll={handleAnimatedScroll}
         onScrollEndDrag={handleScrollEndDrag}
         onMomentumScrollEnd={handleMomentumScrollEnd}
         scrollEventThrottle={16}
@@ -372,40 +408,23 @@ function WheelColumn({
               allowFontScaling={allowFontScaling}
               dynamicInactiveLabelStyle={dynamicInactiveLabelStyle}
               dynamicLabelStyle={dynamicLabelStyle}
+              edgeOpacity={edgeOpacity}
+              fadeDistance={fadeDistance}
               index={index}
               isActive={isActive}
               onPressOption={handlePressOption}
               option={option}
+              rowHeight={rowHeight}
               rowStyle={rowStyle}
+              scrollY={scrollY}
             />
           );
         })}
-      </ScrollView>
+      </Animated.ScrollView>
 
       {wheelWidth > 0 && (
         <View pointerEvents="none" style={StyleSheet.absoluteFill}>
           <Canvas style={StyleSheet.absoluteFill}>
-            <Rect x={0} y={0} width={wheelWidth} height={overlayHeight}>
-              <LinearGradient
-                start={vec(0, 0)}
-                end={vec(0, overlayHeight)}
-                colors={[backgroundColor, transparentBackgroundColor]}
-              />
-            </Rect>
-
-            <Rect
-              x={0}
-              y={bottomGuideY}
-              width={wheelWidth}
-              height={overlayHeight}
-            >
-              <LinearGradient
-                start={vec(0, wheelHeight)}
-                end={vec(0, bottomGuideY)}
-                colors={[backgroundColor, transparentBackgroundColor]}
-              />
-            </Rect>
-
             <Line
               p1={vec(0, topGuideY)}
               p2={vec(wheelWidth, topGuideY)}

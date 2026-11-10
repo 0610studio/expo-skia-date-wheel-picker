@@ -17,6 +17,7 @@ import {
   getClampedDate,
   getDaysInMonth,
   getMinuteOptions,
+  getNormalizedEdgeOpacity,
   getNormalizedRowHeight,
   getNormalizedVisibleRows,
   getPeriodFromHour,
@@ -51,6 +52,7 @@ export type UseDateWheelPickerResult = {
   pickerActiveFontColor: NonNullable<DatePickerProps["activeFontColor"]>;
   pickerBackgroundColor: NonNullable<DatePickerProps["backgroundColor"]>;
   pickerDisableFontColor: string;
+  pickerEdgeOpacity: number;
   pickerMode: PickerMode;
   pickerPadding: number;
   pickerRowHeight: number;
@@ -173,6 +175,7 @@ export const useDateWheelPicker = ({
   backgroundColor,
   activeFontColor,
   disableFontColor,
+  edgeOpacity,
   allowFontScaling,
   fontSize,
   fontFamily,
@@ -185,6 +188,7 @@ export const useDateWheelPicker = ({
     backgroundColor ?? DEFAULT_PICKER_BACKGROUND_COLOR;
   const pickerActiveFontColor = activeFontColor ?? DEFAULT_ACTIVE_FONT_COLOR;
   const pickerDisableFontColor = disableFontColor ?? DEFAULT_DISABLE_FONT_COLOR;
+  const pickerEdgeOpacity = getNormalizedEdgeOpacity(edgeOpacity);
   const pickerRowHeight = useMemo(
     () => getNormalizedRowHeight(rowHeight),
     [rowHeight],
@@ -467,6 +471,7 @@ export const useDateWheelPicker = ({
     pickerActiveFontColor,
     pickerBackgroundColor,
     pickerDisableFontColor,
+    pickerEdgeOpacity,
     pickerMode,
     pickerPadding,
     pickerRowHeight,

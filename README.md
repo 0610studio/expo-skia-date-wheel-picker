@@ -197,7 +197,8 @@ export default function CallbackExample() {
 | `is24hourSource` | `'locale' \| 'device'` | Whether 12/24-hour behavior follows the locale or device setting. Defaults to `'locale'`. |
 | `timeZoneOffsetInMinutes` | `number` | Edits the value using a specific timezone offset. |
 | `onStateChange` | `('spinning' \| 'idle') => void` | Reports wheel interaction state. |
-| `backgroundColor` | `` `#${string}` `` | Wheel background color. Also affects the Skia fade overlays. |
+| `backgroundColor` | `` `#${string}` \| 'transparent' `` | Wheel background color. Defaults to `'transparent'`, so the picker blends into translucent surfaces such as iOS sheets. |
+| `edgeOpacity` | `number` | Label opacity at the top and bottom edge of each wheel (`0`–`1`). Rows fade from fully opaque next to the center row to this value. Defaults to `0`. |
 | `activeFontColor` | `` `#${string}` `` | Active row text color and center guide tint. |
 | `disableFontColor` | `string` | Inactive row text color. |
 | `allowFontScaling` | `boolean` | Enables React Native text scaling. Defaults to `false`. |

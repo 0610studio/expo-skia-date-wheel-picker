@@ -1,7 +1,11 @@
 import React from "react";
 import { View, type StyleProp, type ViewStyle } from "react-native";
 
-import type { DatePickerProps, PickerColumn } from "./model/types";
+import type {
+  DatePickerProps,
+  PickerBackgroundColor,
+  PickerColumn,
+} from "./model/types";
 import { useDateWheelPicker } from "./model/useDateWheelPicker";
 import { DEFAULT_FONT_SIZE } from "./model/utils";
 import WheelColumn from "./ui/WheelColumn";
@@ -16,6 +20,7 @@ const renderColumns = ({
   pickerBackgroundColor,
   pickerActiveFontColor,
   pickerDisableFontColor,
+  pickerEdgeOpacity,
   fontSize,
   fontFamily,
   allowFontScaling,
@@ -25,9 +30,10 @@ const renderColumns = ({
   onStateChange,
 }: {
   columns: PickerColumn[];
-  pickerBackgroundColor: `#${string}`;
+  pickerBackgroundColor: PickerBackgroundColor;
   pickerActiveFontColor: `#${string}`;
   pickerDisableFontColor: string;
+  pickerEdgeOpacity: number;
   fontSize: number;
   fontFamily?: string;
   allowFontScaling: boolean;
@@ -46,6 +52,7 @@ const renderColumns = ({
       backgroundColor={pickerBackgroundColor}
       activeFontColor={pickerActiveFontColor}
       disableFontColor={pickerDisableFontColor}
+      edgeOpacity={pickerEdgeOpacity}
       fontSize={fontSize}
       fontFamily={fontFamily}
       allowFontScaling={allowFontScaling}
@@ -60,9 +67,10 @@ const renderColumns = ({
 type WheelGroupProps = {
   columns: PickerColumn[];
   style: StyleProp<ViewStyle>;
-  pickerBackgroundColor: `#${string}`;
+  pickerBackgroundColor: PickerBackgroundColor;
   pickerActiveFontColor: `#${string}`;
   pickerDisableFontColor: string;
+  pickerEdgeOpacity: number;
   fontSize: number;
   fontFamily?: string;
   allowFontScaling: boolean;
@@ -119,6 +127,7 @@ function DateWheelPicker({
     pickerBackgroundColor,
     pickerActiveFontColor,
     pickerDisableFontColor,
+    pickerEdgeOpacity,
     pickerRowHeight,
     wheelHeight,
     pickerPadding,
@@ -147,6 +156,7 @@ function DateWheelPicker({
         pickerBackgroundColor={pickerBackgroundColor}
         pickerActiveFontColor={pickerActiveFontColor}
         pickerDisableFontColor={pickerDisableFontColor}
+        pickerEdgeOpacity={pickerEdgeOpacity}
         fontSize={fontSize}
         fontFamily={fontFamily}
         allowFontScaling={allowFontScaling}

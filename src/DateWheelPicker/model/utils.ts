@@ -1,4 +1,9 @@
-import type { DatePickerProps, HexColor, PickerOption } from './types';
+import type {
+  DatePickerProps,
+  HexColor,
+  PickerBackgroundColor,
+  PickerOption,
+} from './types';
 
 export const DEFAULT_ROW_HEIGHT = 40;
 export const DEFAULT_VISIBLE_ROWS = 5;
@@ -251,6 +256,16 @@ export const buildDateFromParts = (
   return fromPickerDate(nextPickerDate, timeZoneOffsetInMinutes);
 };
 
-export const DEFAULT_PICKER_BACKGROUND_COLOR: HexColor = '#ffffff';
+export const DEFAULT_PICKER_BACKGROUND_COLOR: PickerBackgroundColor =
+  'transparent';
+export const DEFAULT_EDGE_OPACITY = 0;
+
+export const getNormalizedEdgeOpacity = (edgeOpacity?: number) => {
+  if (edgeOpacity === undefined || Number.isNaN(edgeOpacity)) {
+    return DEFAULT_EDGE_OPACITY;
+  }
+
+  return Math.max(0, Math.min(1, edgeOpacity));
+};
 export const DEFAULT_ACTIVE_FONT_COLOR: HexColor = '#000000';
 export const DEFAULT_DISABLE_FONT_COLOR = '#ccc';
