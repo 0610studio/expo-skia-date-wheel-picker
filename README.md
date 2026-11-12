@@ -62,10 +62,30 @@ Install the published package and required peer dependencies:
 
 ```bash
 npm install @0610studio/expo-skia-date-wheel-picker
-npx expo install @shopify/react-native-skia expo-haptics
+npx expo install react-native-skia expo-haptics
 ```
 
-If you are not using Expo CLI for dependency resolution, make sure `@shopify/react-native-skia` matches your Expo SDK or React Native setup.
+Since 0.3.0 the picker uses React Native Skia v3 (`react-native-skia` 3.x, Skia Graphite). Install `react-native-skia` in place of `@shopify/react-native-skia`, and keep only one of the two in your app.
+
+Skia v3 needs:
+
+- Android `minSdkVersion` 26 or later and a device with Vulkan 1.1
+- iOS 15.1 or later
+- A development build (Expo Go does not include Skia v3)
+
+With Expo, set the Android minimum SDK through `expo-build-properties`:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      ["expo-build-properties", { "android": { "minSdkVersion": 26 } }]
+    ]
+  }
+}
+```
+
+Apps that need Skia v2 (`@shopify/react-native-skia`) can stay on `@0610studio/expo-skia-date-wheel-picker@0.2.x`.
 
 ## Basic usage
 

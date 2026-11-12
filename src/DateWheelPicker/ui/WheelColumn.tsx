@@ -1,4 +1,4 @@
-import { Canvas, Line, vec } from "@shopify/react-native-skia";
+import { Canvas, Line, vec } from "react-native-skia";
 import * as Haptics from "expo-haptics";
 import React, {
   useCallback,
@@ -10,12 +10,12 @@ import React, {
 import {
   Animated,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   type LayoutChangeEvent,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
+  type ScrollViewInstance,
   View,
 } from "react-native";
 
@@ -120,7 +120,7 @@ function WheelColumn({
   pickerPadding,
   flex = 1,
 }: WheelColumnProps) {
-  const scrollRef = useRef<ScrollView | null>(null);
+  const scrollRef = useRef<ScrollViewInstance | null>(null);
   const isScrollingRef = useRef(false);
   const isUserScrollRef = useRef(false);
   const idleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -218,7 +218,13 @@ function WheelColumn({
       }
 
       const nextIndex = getIndexFromOffset(offsetY);
-      const nextValue = options[nextIndex].value;
+      const nextOption = options[nextIndex];
+
+      if (!nextOption) {
+        return;
+      }
+
+      const nextValue = nextOption.value;
 
       if (nextValue !== lastEmittedValueRef.current) {
         lastEmittedValueRef.current = nextValue;
