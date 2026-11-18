@@ -1,5 +1,10 @@
 import type React from 'react';
 
+import type {
+  WheelAppearanceProps,
+  WheelColumnProps,
+} from '../../shared/types';
+
 /**
  * Props for {@link DateWheelPicker}.
  *
@@ -18,7 +23,7 @@ import type React from 'react';
  * />
  * ```
  */
-export type DatePickerProps = {
+export type DatePickerProps = WheelAppearanceProps & {
   /**
    * Controlled selected value.
    *
@@ -74,11 +79,6 @@ export type DatePickerProps = {
   onDateChange?: (date: Date) => void;
 
   /**
-   * Reports whether any wheel is currently moving.
-   */
-  onStateChange?: (state: 'spinning' | 'idle') => void;
-
-  /**
    * Edits the value using a specific timezone offset.
    *
    * @remarks
@@ -93,90 +93,12 @@ export type DatePickerProps = {
    * @defaultValue "locale"
    */
   is24hourSource?: 'locale' | 'device';
-
-  /**
-   * Background color behind the wheels.
-   *
-   * @remarks
-   * The edge fade is applied to the row labels themselves, so the picker can
-   * sit on translucent surfaces such as iOS sheets.
-   *
-   * @defaultValue "transparent"
-   */
-  backgroundColor?: PickerBackgroundColor;
-
-  /**
-   * Label opacity at the very top and bottom edge of each wheel.
-   *
-   * Rows fade linearly from fully opaque next to the center row down to this
-   * value at the edge. Clamped to `0`–`1`.
-   *
-   * @defaultValue 0
-   */
-  edgeOpacity?: number;
-
-  /**
-   * Color for the active centered row and guide accents.
-   */
-  activeFontColor?: HexColor;
-
-  /**
-   * Color for inactive rows outside the center selection area.
-   */
-  disableFontColor?: string;
-
-  /**
-   * Enables React Native font scaling for row labels.
-   *
-   * @defaultValue false
-   */
-  allowFontScaling?: boolean;
-
-  /**
-   * Font size used for wheel labels.
-   */
-  fontSize?: number;
-
-  /**
-   * Optional font family applied to wheel labels.
-   */
-  fontFamily?: string;
-
-  /**
-   * Height of each selectable row.
-   *
-   * Values less than or equal to zero fall back to the internal default.
-   */
-  rowHeight?: number;
-
-  /**
-   * Number of visible rows in each wheel column.
-   *
-   * Even values are normalized to an odd count so the active row remains
-   * centered.
-   */
-  visibleRows?: number;
 };
-
-/**
- * Hex-style color string.
- */
-export type HexColor = `#${string}`;
-
-/**
- * Picker background: a hex color or `"transparent"`.
- */
-export type PickerBackgroundColor = HexColor | 'transparent';
 
 /**
  * Supported top-level picker modes.
  */
 export type PickerMode = NonNullable<DatePickerProps['mode']>;
-
-/**
- * Selectable row rendered by a wheel column.
- */
-export type PickerOption = { label: string; value: number };
 
 /**
  * Date wheel parts used in `mode="date"`.
@@ -187,31 +109,6 @@ export type DatePartKey = 'year' | 'month' | 'day';
  * Time wheel parts used in `mode="time"`.
  */
 export type TimePartKey = 'hour' | 'minute' | 'period';
-
-/**
- * Low-level props for an individual wheel column.
- *
- * @remarks
- * This is exported mainly for advanced composition and typing. Most consumers
- * should use {@link DatePickerProps} with {@link DateWheelPicker} instead.
- */
-export type WheelColumnProps = {
-  options: PickerOption[];
-  selectedValue: number;
-  onValueChange: (value: number) => void;
-  onStateChange?: (state: 'spinning' | 'idle') => void;
-  backgroundColor: PickerBackgroundColor;
-  activeFontColor: HexColor;
-  disableFontColor: string;
-  edgeOpacity: number;
-  fontSize: number;
-  fontFamily?: string;
-  allowFontScaling: boolean;
-  rowHeight: number;
-  wheelHeight: number;
-  pickerPadding: number;
-  flex?: number;
-};
 
 /**
  * Column definition generated for the picker's internal wheel layout.

@@ -1,14 +1,11 @@
 import { View, type StyleProp, type ViewStyle } from "react-native";
 
-import type {
-  DatePickerProps,
-  PickerBackgroundColor,
-  PickerColumn,
-} from "./model/types";
+import WheelColumn from "../shared/WheelColumn";
+import { styles } from "../shared/styles";
+import type { PickerBackgroundColor } from "../shared/types";
+import { DEFAULT_FONT_SIZE } from "../shared/utils";
+import type { DatePickerProps, PickerColumn } from "./model/types";
 import { useDateWheelPicker } from "./model/useDateWheelPicker";
-import { DEFAULT_FONT_SIZE } from "./model/utils";
-import WheelColumn from "./ui/WheelColumn";
-import { styles } from "./ui/styles";
 
 const DEFAULT_MODE = "date";
 const DEFAULT_IS_24_HOUR_SOURCE = "locale";

@@ -35,6 +35,11 @@ const EXAMPLES = [
     title: 'Callbacks',
     description: 'Watch onDateChange and onStateChange in real time.',
   },
+  {
+    href: '/wheel',
+    title: 'WheelPicker',
+    description: 'One wheel for any list of number or string options.',
+  },
 ] as const;
 
 export default function HomeScreen() {
@@ -52,13 +57,13 @@ export default function HomeScreen() {
       <Stack.Screen options={{ title: 'Examples' }} />
       <DemoScreen
         title="Expo Router example app"
-        description="Browse focused demo pages instead of one long screen. Each route isolates a DateWheelPicker feature so open-source users can copy the exact setup they need."
+        description="Browse focused demo pages instead of one long screen. Each route isolates a DateWheelPicker or WheelPicker feature so open-source users can copy the exact setup they need."
       >
         <DemoCard title="What this example covers">
           <BadgeRow
             items={[
               { label: 'Routes', value: `${EXAMPLES.length}` },
-              { label: 'Modes', value: 'date + time' },
+              { label: 'Pickers', value: 'date + time + list' },
               { label: 'Focus', value: 'copyable demos', tone: 'success' },
             ]}
           />
@@ -69,6 +74,7 @@ export default function HomeScreen() {
               'Range limits with minimumDate / maximumDate',
               'Locale and timeZoneOffsetInMinutes behavior',
               'Visual customization props and interaction callbacks',
+              'WheelPicker for number and string option lists',
             ]}
           />
         </DemoCard>

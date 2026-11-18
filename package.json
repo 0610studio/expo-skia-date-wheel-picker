@@ -1,8 +1,8 @@
 {
   "name": "@0610studio/expo-skia-date-wheel-picker",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "private": false,
-  "description": "Skia-powered date wheel picker for Expo and React Native",
+  "description": "Skia-powered date, time and list wheel pickers for Expo and React Native",
   "type": "commonjs",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -28,7 +28,9 @@
     "expo-skia-date-wheel-picker",
     "date-wheel-picker",
     "date-picker",
-    "skia"
+    "skia",
+    "wheel-picker",
+    "picker"
   ],
   "exports": {
     ".": {
@@ -43,7 +45,7 @@
   "bugs": {
     "url": "https://github.com/0610studio/expo-skia-date-wheel-picker/issues"
   },
-  "author": "righthot <0610studio@naver.com> ()",
+  "author": "KimJeonghun91 <0610studio@naver.com>",
   "license": "MIT",
   "homepage": "https://github.com/0610studio/expo-skia-date-wheel-picker#readme",
   "publishConfig": {
@@ -54,10 +56,11 @@
     "@babel/core": "^7.29.0",
     "@react-native/jest-preset": "0.88.1",
     "@types/react": "~19.3.0",
-    "expo": "~58.0.24",
+    "expo": "~58.0.26",
     "expo-haptics": "~58.0.8",
     "expo-module-scripts": "56.0.8",
     "jest": "^30",
+    "jest-expo": "~58.0.15",
     "oxlint": "1.93.0",
     "prettier": "^3.10.1",
     "react": "19.3.0",
@@ -92,5 +95,8 @@
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
+  },
+  "jest": {
+    "preset": "jest-expo"
   }
 }

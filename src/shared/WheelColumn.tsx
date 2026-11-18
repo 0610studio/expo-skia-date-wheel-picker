@@ -20,8 +20,8 @@ import {
 } from "react-native";
 
 import { styles } from "./styles";
-import type { PickerOption, WheelColumnProps } from "../model/types";
-import { getClampedIndex, withHexAlpha } from "../model/utils";
+import type { PickerOption, WheelColumnProps } from "./types";
+import { getClampedIndex, withHexAlpha } from "./utils";
 
 type WheelOptionRowProps = {
   allowFontScaling: boolean;
@@ -125,6 +125,7 @@ function WheelColumn({
   const isUserScrollRef = useRef(false);
   const idleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastEmittedValueRef = useRef(selectedValue);
+  const wheelStateRef = useRef<"spinning" | "idle">("idle");
   const [wheelWidth, setWheelWidth] = useState(0);
   const [displayedIndex, setDisplayedIndex] = useState(0);
   const [wheelState, setWheelState] = useState<"spinning" | "idle">("idle");
@@ -238,14 +239,16 @@ function WheelColumn({
   const updateWheelState = useCallback(
     (nextState: "spinning" | "idle") => {
       isScrollingRef.current = nextState === "spinning";
-      setWheelState((currentState) => {
-        if (currentState === nextState) {
-          return currentState;
-        }
 
-        onStateChange?.(nextState);
-        return nextState;
-      });
+      if (wheelStateRef.current === nextState) {
+        return;
+      }
+
+      // Notify the parent from the event handler, not from a state updater:
+      // updaters run during render, and a parent setState there is a React error.
+      wheelStateRef.current = nextState;
+      setWheelState(nextState);
+      onStateChange?.(nextState);
     },
     [onStateChange],
   );

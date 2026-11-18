@@ -1,8 +1,13 @@
 # expo-skia-date-wheel-picker
 
-Responsive date and time wheel picker for Expo and React Native, with Skia-rendered overlays and immediate `onDateChange` updates while the wheel moves.
+Responsive date, time and list wheel pickers for Expo and React Native, with Skia-rendered overlays and immediate updates while the wheel moves.
 
-This package keeps the API small and predictable:
+The package has two components that share one wheel:
+
+- `DateWheelPicker` edits a `Date` in `date` or `time` mode.
+- `WheelPicker` picks one value from any list of number or string options.
+
+`DateWheelPicker` keeps the API small and predictable:
 
 - controlled with a single `date: Date` value
 - supports both `date` and `time` modes
@@ -55,6 +60,7 @@ This package keeps the API small and predictable:
 - Locale-aware labels and 12/24-hour behavior
 - `timeZoneOffsetInMinutes` for editing in another timezone
 - Styling props for colors, typography, row height, and visible rows
+- `WheelPicker` for any list of options, with the same look and styling props
 
 ## Installation
 
@@ -112,7 +118,7 @@ You can also import the named export:
 import { DateWheelPicker } from '@0610studio/expo-skia-date-wheel-picker';
 ```
 
-The package root also exports its public types, including `DatePickerProps`, `PickerMode`, `DatePartKey`, `TimePartKey`, `PickerOption`, `PickerColumn`, `WheelColumnProps`, and `HexColor`.
+The package root also exports its public types, including `DatePickerProps`, `PickerMode`, `DatePartKey`, `TimePartKey`, `WheelPickerProps`, `WheelPickerOption`, `WheelPickerValue`, `WheelAppearanceProps`, `PickerOption`, `PickerColumn`, `WheelColumnProps`, and `HexColor`.
 
 ## Common recipes
 
@@ -203,7 +209,46 @@ export default function CallbackExample() {
 }
 ```
 
-## Props
+## WheelPicker
+
+Use `WheelPicker` when the choice is not a date or a time, such as a reminder offset, a day of the month, or a list of time slots. It renders one wheel with the same look, haptics and styling props as `DateWheelPicker`.
+
+```tsx
+import { useState } from 'react';
+import { WheelPicker } from '@0610studio/expo-skia-date-wheel-picker';
+
+const REMINDERS = [
+  { label: '10 minutes before', value: 10 },
+  { label: '30 minutes before', value: 30 },
+  { label: '1 hour before', value: 60 },
+];
+
+export default function ReminderExample() {
+  const [minutes, setMinutes] = useState(30);
+
+  return (
+    <WheelPicker
+      options={REMINDERS}
+      value={minutes}
+      onValueChange={setMinutes}
+    />
+  );
+}
+```
+
+Option values can be numbers or strings. `onValueChange` returns the value exactly as given, so `{ label: '09:30', value: '09:30' }` comes back as `'09:30'`.
+
+### WheelPicker props
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `options` | `{ label: string; value: T }[]` | Rows in display order. `T` is `string` or `number`. Keep values unique; they are compared with `===`. |
+| `value` | `T` | Controlled selected value. When no option matches, the wheel shows the first row. |
+| `onValueChange` | `(value: T) => void` | Called when the centered row changes. Fires while scrolling. |
+
+`WheelPicker` also takes the shared look props listed below: `onStateChange`, `backgroundColor`, `edgeOpacity`, `activeFontColor`, `disableFontColor`, `allowFontScaling`, `fontSize`, `fontFamily`, `rowHeight`, and `visibleRows`.
+
+## DateWheelPicker props
 
 | Prop | Type | Description |
 | --- | --- | --- |
@@ -216,6 +261,11 @@ export default function CallbackExample() {
 | `locale` | `string` | Locale used for labels and hour-cycle formatting. |
 | `is24hourSource` | `'locale' \| 'device'` | Whether 12/24-hour behavior follows the locale or device setting. Defaults to `'locale'`. |
 | `timeZoneOffsetInMinutes` | `number` | Edits the value using a specific timezone offset. |
+
+Shared look props (`DateWheelPicker` and `WheelPicker`):
+
+| Prop | Type | Description |
+| --- | --- | --- |
 | `onStateChange` | `('spinning' \| 'idle') => void` | Reports wheel interaction state. |
 | `backgroundColor` | `` `#${string}` \| 'transparent' `` | Wheel background color. Defaults to `'transparent'`, so the picker blends into translucent surfaces such as iOS sheets. |
 | `edgeOpacity` | `number` | Label opacity at the top and bottom edge of each wheel (`0`–`1`). Rows fade from fully opaque next to the center row to this value. Defaults to `0`. |
@@ -253,6 +303,7 @@ The example app intentionally aliases the local source as `expo-skia-date-wheel-
 - `/locale-timezone` — locale-aware formatting and timezone offset handling
 - `/styling` — colors, row height, visible rows, and typography
 - `/callbacks` — live `onDateChange` updates and `onStateChange`
+- `/wheel` — `WheelPicker` with number and string options
 
 ### Run the example app
 
